@@ -14,7 +14,7 @@ with engine.connect() as conn:
     conn.execute(query)
 
 st.header('HOTEL RESERVATIONS & CAFE DATA MANAGEMENT SYSTEM')
-page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
+page = st.sidebar.selectbox("Pilih Menu", menu_options, key="menu_selection")
 
 list_doctor = ['', 'dr. Nurita', 'dr. Yogi', 'dr. Wibowo', 'dr. Ulama', 'dr. Ping']
 list_symptom = ['', 'male', 'female']
