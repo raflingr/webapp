@@ -1,5 +1,5 @@
-drop table if exists ppp;
-create table ppp (
+drop table if exists schedule;
+create table schedule (
 	id serial,
 	customer_name text,
 	doctor_name text,
@@ -12,7 +12,8 @@ create table ppp (
 	tanggal date
 );
 
-insert into ppp (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) 
+insert into schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) 
 values
-	('rafli', 'dr. Nurita', 'Ahmad Maulana', 'male', '["headache", "stomache"]', 62838, 'address1', '08:00', '2023-10-01')
+	('rafli', 'dr. Nurita', 'Ahmad Maulana', 'male', '["headache", "stomache"]', 62838, 'address1', '08:00', '2023-10-01'),
+	('dhany', 'dr. Yogi', 'Renata Zahab', 'female', '["cough", "flu"]', 62828, 'address2', '08:00', '2022-11-02')
 	;
