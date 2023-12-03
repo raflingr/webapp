@@ -18,6 +18,18 @@ if page == "View Data":
     data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0").set_index('id')
     st.dataframe(data)
 
+    # Visualize data using seaborn
+    st.subheader("Data Visualization")
+    
+    # Countplot for Gender
+    st.pyplot(sns.countplot(x='gender', data=data))
+    
+    # Bar plot for Doctor-wise patient count
+    st.pyplot(sns.countplot(x='doctor_name', data=data))
+    st.pyplot(plt.xticks(rotation=45, ha='right'))
+
+    # Custom visualizations can be added based on your data and requirements
+
 if page == "Edit Data":
     if st.button('Tambah Data'):
         with conn.session as session:
@@ -69,3 +81,4 @@ if page == "Edit Data":
                         session.execute(query, {'1':id})
                         session.commit()
                         st.experimental_rerun()
+# ... (Your existing code)
