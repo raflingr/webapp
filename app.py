@@ -41,12 +41,10 @@ if page == "View Data":
 
 if page == "Edit Data":
     if st.button('Tambah Data'):
-        with conn.session as session:
+        with engine.connect() as conn:
             query = text('INSERT INTO schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7, :8);')
-            session.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None, '8':None})
-            session.commit()
-
+            conn.execute(query, {'1':'', '2':'', '3':'', '4':'[]', '5':'', '6':'', '7':None, '8':None})
 
     data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine)
     for _, result in data.iterrows():        
