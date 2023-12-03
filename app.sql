@@ -12,7 +12,7 @@ create table schedule (
 	tanggal date
 );
 
-insert into schedule (customer, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) 
+insert into schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) 
 values
 	('Rafli', 'dr. Nurita', 'Ahmad Maulana', 'male', '["headache", "stomache"]', 62838, 'address1', '08:00', '2023-10-01'),
 	('qwdd', 'dr. Ping', 'Zizah Lana', 'female', '["flu", "stomache", "headache"]', 62838, 'address7', '09:00', '2022-10-07'),
