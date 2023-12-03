@@ -51,7 +51,7 @@ if page == "Edit Data":
         id = result['id']
         doctor_name_lama = result["doctor_name"]
         patient_name_lama = result["patient_name"]
-        customer_name_lama = result["customer_name"]  # Tambahkan baris ini
+        customer_name_lama = result["customer_name"] if "customer_name" in result else ""  # Tambahkan baris ini
         gender_lama = result["gender"]
         symptom_lama = result["symptom"]
         handphone_lama = result["handphone"]
@@ -80,7 +80,7 @@ if page == "Edit Data":
                                           SET doctor_name=:1, patient_name=:2, customer_name=:3, gender=:4, symptom=:5, \
                                           handphone=:6, address=:7, waktu=:8, tanggal=:9 \
                                           WHERE id=:10;')
-                            conn.execute(query, {'1': doctor_name_baru, '2': patient_name_baru, '3': customer_name_baru,  # Tambahkan baris ini
+                            conn.execute(query, {'1': doctor_name_baru, '2': patient_name_baru, '3': customer_name_baru,
                                                  '4': gender_baru, '5': str(symptom_baru), '6': handphone_baru,
                                                  '7': address_baru, '8': waktu_baru, '9': tanggal_baru, '10': id})
 
