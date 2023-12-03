@@ -1,7 +1,7 @@
 drop table if exists schedule;
 create table schedule (
 	id serial,
-	customer text,
+	customer_name text,
 	doctor_name text,
 	patient_name text,
 	gender text,
