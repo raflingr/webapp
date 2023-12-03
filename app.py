@@ -12,7 +12,7 @@ engine = create_engine("postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-d
 
 # Tambahkan kolom customer_name pada skema tabel
 with engine.connect() as conn:
-    query = text('CREATE TABLE IF NOT EXISTS SCHEDULE (id serial, customer_name varchar, doctor_name varchar, patient_name varchar, \
+    query = text('CREATE TABLE IF NOT EXISTS ppp (id serial, customer_name varchar, doctor_name varchar, patient_name varchar, \
                                                        gender char(25), symptom text, handphone varchar, address text, waktu time, tanggal date);')
     conn.execute(query)
 
@@ -20,7 +20,7 @@ st.header('HOTEL RESERVATIONS & CAFE DATA MANAGEMENT SYSTEM')
 page = st.sidebar.selectbox("Pilih Menu", ["View Data", "Edit Data"])
 
 if page == "View Data":
-    data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine).set_index('id')
+    data = pd.read_sql_query('SELECT * FROM ppp ORDER By id;', engine).set_index('id')
     st.dataframe(data)
 
     # Visualize data using seaborn
@@ -42,11 +42,11 @@ if page == "View Data":
 if page == "Edit Data":
     if st.button('Tambah Data'):
         with engine.connect() as conn:
-            query = text('INSERT INTO schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) \
+            query = text('INSERT INTO ppp (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9);')
             conn.execute(query, {'1': 'rafli', '2': 'dr. Nurita', '3': 'Ahmad Maulana', '4': 'male', '5': '["headache", "stomache"]', '6': '62838', '7': 'address1', '8': '08:00', '9': '2023-10-01'})
 
-    data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine)
+    data = pd.read_sql_query('SELECT * FROM ppp ORDER By id;', engine)
     for _, result in data.iterrows():        
         id = result['id']
         customer_name_lama = result["customer_name"]
@@ -76,7 +76,7 @@ if page == "Edit Data":
                 with col1:
                     if st.form_submit_button('UPDATE'):
                         with engine.connect() as conn:
-                            query = text('UPDATE schedule \
+                            query = text('UPDATE ppp \
                                           SET customer_name=:1, doctor_name=:2, patient_name=:3, gender=:4, symptom=:5, \
                                           handphone=:6, address=:7, waktu=:8, tanggal=:9 \
                                           WHERE id=:10;')
@@ -87,5 +87,5 @@ if page == "Edit Data":
                 with col2:
                     if st.form_submit_button('DELETE'):
                         with engine.connect() as conn:
-                            query = text(f'DELETE FROM schedule WHERE id=:1;')
+                            query = text(f'DELETE FROM ppp WHERE id=:1;')
                             conn.execute(query, {'1': id})
