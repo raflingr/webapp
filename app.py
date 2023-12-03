@@ -26,12 +26,24 @@ with conn.session as session:
                                                        symptom text, handphone varchar, address text, tanggal date);')
     session.execute(query)
 
-st.header('HOTEL RESERVATIONS & CAFE DATA MANAGEMENT SYSTEM')
-page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
-
 if page == "View Data":
     data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0").set_index('id')
     st.dataframe(data)
+
+    # Visualize data using seaborn
+    st.subheader("Data Visualization")
+    
+    # Countplot for Gender
+    fig, ax = plt.subplots()
+    sns.countplot(x='gender', data=data, ax=ax)
+    st.pyplot(fig)
+    
+    # Bar plot for Doctor-wise patient count
+    fig, ax = plt.subplots()
+    sns.countplot(x='doctor_name', data=data, ax=ax)
+    st.pyplot(fig)
+
+    # Custom visualizations can be added based on your data and requirements    
 
 if page == "Edit Data":
     if st.button('Tambah Data'):
@@ -85,21 +97,3 @@ if page == "Edit Data":
                         session.commit()
                         st.experimental_rerun()
 # ... (Your existing code)
-if page == "View Data":
-    data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine).set_index('id')
-    st.dataframe(data)
-
-    # Visualize data using seaborn
-    st.subheader("Data Visualization")
-    
-    # Countplot for Gender
-    fig, ax = plt.subplots()
-    sns.countplot(x='gender', data=data, ax=ax)
-    st.pyplot(fig)
-    
-    # Bar plot for Doctor-wise patient count
-    fig, ax = plt.subplots()
-    sns.countplot(x='doctor_name', data=data, ax=ax)
-    st.pyplot(fig)
-
-    # Custom visualizations can be added based on your data and requirements
