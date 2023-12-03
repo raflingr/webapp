@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Define list_doctor dan list_symptom
 list_doctor = ['', 'dr. Nurita', 'dr. Yogi', 'dr. Wibowo', 'dr. Ulama', 'dr. Ping']
 list_symptom = ['', 'male', 'female']
 
@@ -11,7 +12,7 @@ engine = create_engine("postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-d
 
 with engine.connect() as conn:
     query = text('CREATE TABLE IF NOT EXISTS SCHEDULE (id serial, doctor_name varchar, patient_name varchar, gender char(25), \
-                                                       symptom text, handphone varchar, address text, tanggal date);')
+                                                       symptom text, handphone varchar, address text, waktu time, tanggal date);')
     conn.execute(query)
 
 st.header('HOTEL RESERVATIONS & CAFE DATA MANAGEMENT SYSTEM')
