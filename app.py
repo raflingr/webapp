@@ -44,7 +44,7 @@ if page == "Edit Data":
         with engine.connect() as conn:
             query = text('INSERT INTO schedule (doctor_name, patient_name, customer_name, gender, symptom, handphone, address, waktu, tanggal) \
                           VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9);')
-            conn.execute(query, {'1': '', '2': '', '3': '', '4': '', '5': '[]', '6': '', '7': '', '8': None, '9': None})
+            conn.execute(query, {'1': 'dr. Nurita', '2': 'Ahmad Maulana', '3': 'rafli', '4': 'male', '5': '["headache", "stomache"]', '6': '62838', '7': 'address1', '8': '08:00', '9': '2023-10-01'})
 
     data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine)
     for _, result in data.iterrows():        
