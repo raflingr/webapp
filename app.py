@@ -1,5 +1,20 @@
 import streamlit as st
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+list_doctor = ['', 'dr. Nurita', 'dr. Yogi', 'dr. Wibowo', 'dr. Ulama', 'dr. Ping']
+list_symptom = ['', 'male', 'female']
+
+engine = create_engine("postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-dust-26397985.us-east-2.aws.neon.tech/web")
+
+with engine.connect() as conn:
+    query = text('CREATE TABLE IF NOT EXISTS SCHEDULE (id serial, doctor_name varchar, patient_name varchar, gender char(25), \
+                                                       symptom text, handphone varchar, address text, tanggal date);')
+    conn.execute(query)
+
+st.header('HOTEL RESERVATIONS & CAFE DATA MANAGEMENT SYSTEM')
+page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
 
 list_doctor = ['', 'dr. Nurita', 'dr. Yogi', 'dr. Wibowo', 'dr. Ulama', 'dr. Ping']
 list_symptom = ['', 'male', 'female']
@@ -70,19 +85,21 @@ if page == "Edit Data":
                         session.commit()
                         st.experimental_rerun()
 # ... (Your existing code)
-
 if page == "View Data":
-    data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0").set_index('id')
+    data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', engine).set_index('id')
     st.dataframe(data)
 
     # Visualize data using seaborn
     st.subheader("Data Visualization")
     
     # Countplot for Gender
-    st.pyplot(sns.countplot(x='gender', data=data))
+    fig, ax = plt.subplots()
+    sns.countplot(x='gender', data=data, ax=ax)
+    st.pyplot(fig)
     
     # Bar plot for Doctor-wise patient count
-    st.pyplot(sns.countplot(x='doctor_name', data=data))
-    st.pyplot(plt.xticks(rotation=45, ha='right'))
+    fig, ax = plt.subplots()
+    sns.countplot(x='doctor_name', data=data, ax=ax)
+    st.pyplot(fig)
 
     # Custom visualizations can be added based on your data and requirements
