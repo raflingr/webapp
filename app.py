@@ -24,11 +24,14 @@ if page == "View Data":
     st.subheader("Data Visualization")
     
     # Countplot for Gender
-    st.pyplot(sns.countplot(x='gender', data=data))
+    fig, ax = plt.subplots()
+    sns.countplot(x='gender', data=data, ax=ax)
+    st.pyplot(fig)
     
     # Bar plot for Doctor-wise patient count
-    st.pyplot(sns.countplot(x='doctor_name', data=data))
-    st.pyplot(plt.xticks(rotation=45, ha='right'))
+    fig, ax = plt.subplots()
+    sns.countplot(x='doctor_name', data=data, ax=ax)
+    st.pyplot(fig)
 
     # Custom visualizations can be added based on your data and requirements
 
