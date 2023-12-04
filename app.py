@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import text
 import seaborn as sns
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 # Data reservasi
 data_reservasi = pd.DataFrame({
@@ -43,29 +43,29 @@ if page == "View Data":
     st.table(dummy_data)
 
     # Data Visualization
-data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', conn).set_index('id')
-st.dataframe(data)
+    data = pd.read_sql_query('SELECT * FROM RESERVATION ORDER By id;', conn).set_index('id')
+    st.dataframe(data)
 
-# Visualize data using seaborn
-st.subheader("Data Visualization")
+    # Visualize data using seaborn
+    st.subheader("Data Visualization")
 
-# Countplot for Makan
-st.subheader("Makan")
-fig, ax = plt.subplots()
-sns.countplot(x='Makan', data=data, ax=ax)
-st.pyplot(fig)
+    # Countplot for Makan
+    st.subheader("Makan")
+    fig, ax = plt.subplots()
+    sns.countplot(x='Makan', data=data, ax=ax)
+    st.pyplot(fig)
 
-# Countplot for Minum
-st.subheader("Minum")
-fig, ax = plt.subplots()
-sns.countplot(x='Minum', data=data, ax=ax)
-st.pyplot(fig)
+    # Countplot for Minum
+    st.subheader("Minum")
+    fig, ax = plt.subplots()
+    sns.countplot(x='Minum', data=data, ax=ax)
+    st.pyplot(fig)
 
-# Bar plot for Total Pendapatan
-st.subheader("Total Pendapatan")
-fig, ax = plt.subplots()
-sns.barplot(x='Pembayaran', data=data, ax=ax)
-st.pyplot(fig)
+    # Bar plot for Pembayaran
+    st.subheader("Pembayaran")
+    fig, ax = plt.subplots()
+    sns.countplot(x='Pembayaran', data=data, ax=ax)
+    st.pyplot(fig)
 
 if page == "Edit Data":
     st.subheader('Form Reservasi')
