@@ -54,23 +54,22 @@ if page == "View Data":
 
     # Countplot for Makan
     st.subheader("Makan")
-    fig, ax = plt.subplots()
     makan_counts = [makan for sublist in data['Makan'].dropna() for makan in sublist]
-    sns.countplot(x=makan_counts, ax=ax)
-    st.pyplot(fig)
+    makan_counts_series = pd.Series(makan_counts)
+    sns.countplot(x=makan_counts_series, order=makan_counts_series.value_counts().index)
+    st.pyplot()
 
     # Countplot for Minum
     st.subheader("Minum")
-    fig, ax = plt.subplots()
     minum_counts = [minum for sublist in data['Minum'].dropna() for minum in sublist]
-    sns.countplot(x=minum_counts, ax=ax)
-    st.pyplot(fig)
+    minum_counts_series = pd.Series(minum_counts)
+    sns.countplot(x=minum_counts_series, order=minum_counts_series.value_counts().index)
+    st.pyplot()
 
     # Bar plot for Pembayaran
     st.subheader("Pembayaran")
-    fig, ax = plt.subplots()
-    sns.countplot(x='Pembayaran', data=data, ax=ax)
-    st.pyplot(fig)
+    sns.countplot(x='Pembayaran', data=data)
+    st.pyplot()
 
 if page == "Edit Data":
     st.subheader('Form Reservasi')
