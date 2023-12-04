@@ -1,73 +1,103 @@
 import streamlit as st
+import pandas as pd
 from sqlalchemy import text
+import seaborn as sns
+import pandas as pd
+import matplotlib as plt
 
-list_doctor = ['', 'dr. Nurita', 'dr. Yogi', 'dr. Wibowo', 'dr. Ulama', 'dr. Ping']
-list_symptom = ['', 'male', 'female']
+# Data reservasi
+data_reservasi = pd.DataFrame({
+    'Pertanyaan': ['Nama', 'Makan:', 'Minum:', 'Pembayaran:', 'No Kamar:', 'No Meja:'],
+    'Type': ['text', 'chose multiple', 'chose multiple', 'chose bersyarat', 'text', 'text'],  # Mengubah tipe data menjadi text
+    'Harga': [None, {'Nasi Goreng': 22000, 'Mie Goreng': 10000, 'Ayam Goreng': 15000}, {'Es Teh': 8000, 'Es Jeruk': 8000, 'Air Mineral': 5000}, None, None, None],
+    'Value': [None, None, None, None, None, None]
+})
 
 conn = st.connection("postgresql", type="sql", 
-                     url="postgresql://reza.habibi14:a1qzLyHmI9OQ@ep-long-wildflower-08546844.us-east-2.aws.neon.tech/web")
+                     url="postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-dust-26397985.us-east-2.aws.neon.tech/web")
+# Membuat tabel baru jika belum ada
 with conn.session as session:
-    query = text('CREATE TABLE IF NOT EXISTS SCHEDULE (id serial, doctor_name varchar, patient_name varchar, gender char(25), \
-                                                       symptom text, handphone varchar, address text, tanggal date);')
+    query = text('CREATE TABLE IF NOT EXISTS RESERVATION (id serial, \
+                                                       Nama varchar, \
+                                                       Makan text[], \
+                                                       Minum text[], \
+                                                       Pembayaran varchar, \
+                                                       No_Kamar varchar, \
+                                                       No_Meja varchar, \
+                                                       PRIMARY KEY (id));')
     session.execute(query)
 
-st.header('SIMPLE HOSPITAL DATA MANAGEMENT SYS')
-page = st.sidebar.selectbox("Pilih Menu", ["View Data","Edit Data"])
+# Tampilkan form untuk mengisi data
+st.header('CAFE HOTEL NUANSA LIMA')
+page = st.sidebar.selectbox("Reservasi Cafe", ["View Data", "Edit Data"])
 
 if page == "View Data":
-    data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0").set_index('id')
-    st.dataframe(data)
+    # Dummy data untuk ditampilkan
+    dummy_data = [
+        {'Nama': 'John Doe', 'Makan': ['Nasi Goreng', 'Ayam Goreng'], 'Minum': ['Es Teh', 'Air Mineral'], 'Pembayaran': 'Debit', 'No Kamar': '101', 'No Meja': 'A1', 'Total Harga': 27000},
+        {'Nama': 'Jane Doe', 'Makan': ['Mie Goreng', 'Ayam Goreng'], 'Minum': ['Es Jeruk', 'Air Mineral'], 'Pembayaran': 'Cash', 'No Kamar': '102', 'No Meja': 'A2', 'Total Harga': 28000},
+    ]
+
+    # Tampilkan data dalam bentuk tabel
+    st.subheader('Data Reservasi')
+    st.table(dummy_data)
+
+    # Data Visualization
+data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', conn).set_index('id')
+st.dataframe(data)
+
+# Visualize data using seaborn
+st.subheader("Data Visualization")
+
+# Countplot for Makan
+st.subheader("Makan")
+fig, ax = plt.subplots()
+sns.countplot(x='Makan', data=data, ax=ax)
+st.pyplot(fig)
+
+# Countplot for Minum
+st.subheader("Minum")
+fig, ax = plt.subplots()
+sns.countplot(x='Minum', data=data, ax=ax)
+st.pyplot(fig)
+
+# Bar plot for Total Pendapatan
+st.subheader("Total Pendapatan")
+fig, ax = plt.subplots()
+sns.barplot(x='Pembayaran', data=data, ax=ax)
+st.pyplot(fig)
 
 if page == "Edit Data":
-    if st.button('Tambah Data'):
-        with conn.session as session:
-            query = text('INSERT INTO schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) \
-                          VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9);')
-            session.execute(query, {'1':'', '2':'', '3':'', '4':'', '5':'[]', '6':'', '7':'', '8':None, '9':None})
-            session.commit()
+    st.subheader('Form Reservasi')
+    total_harga = 0  # Inisialisasi total harga
 
-    data = conn.query('SELECT * FROM schedule ORDER By id;', ttl="0")
-    for _, result in data.iterrows():        
-        id = result['id']
-        customer_name_lama = result["customer_name"]
-        doctor_name_lama = result["doctor_name"]
-        patient_name_lama = result["patient_name"]
-        gender_lama = result["gender"]
-        symptom_lama = result["symptom"]
-        handphone_lama = result["handphone"]
-        address_lama = result["address"]
-        waktu_lama = result["waktu"]
-        tanggal_lama = result["tanggal"]
+    for _, row in data_reservasi.iterrows():
+        pertanyaan = row['Pertanyaan']
+        tipe_data = row['Type']
 
-        with st.expander(f'a.n. {patient_name_lama}'):
-            with st.form(f'data-{id}'):
-                customer_name_baru = st.text_input("customer", customer_name_lama)
-                doctor_name_baru = st.selectbox("doctor_name", list_doctor, list_doctor.index(doctor_name_lama))
-                patient_name_baru = st.text_input("patient_name", patient_name_lama)
-                gender_baru = st.selectbox("gender", list_symptom, list_symptom.index(gender_lama))
-                symptom_baru = st.multiselect("symptom", ['cough', 'flu', 'headache', 'stomache'], eval(symptom_lama))
-                handphone_baru = st.text_input("handphone", handphone_lama)
-                address_baru = st.text_input("address", address_lama)
-                waktu_baru = st.time_input("waktu", waktu_lama)
-                tanggal_baru = st.date_input("tanggal", tanggal_lama)
-                
-                col1, col2 = st.columns([1, 6])
+        if tipe_data == 'text':
+            jawaban = st.text_input(pertanyaan, key=f"{pertanyaan.strip(':')}_input")
+        elif tipe_data == 'integer':
+            jawaban = st.number_input(pertanyaan, key=f"{pertanyaan.strip(':')}_input")
+        elif tipe_data == 'chose multiple':
+            pilihan = row['Harga'].keys()  # Mengambil pilihan dari kolom Harga
+            jawaban = st.multiselect(pertanyaan, pilihan, key=f"{pertanyaan.strip(':')}_input")
+        elif tipe_data == 'chose bersyarat':
+            pilihan = ['Cash', 'Debit']  # Ganti dengan pilihan yang sesuai
+            jawaban = st.selectbox(pertanyaan, pilihan, key=f"{pertanyaan.strip(':')}_input")
 
-                with col1:
-                    if st.form_submit_button('UPDATE'):
-                        with conn.session as session:
-                            query = text('UPDATE schedule \
-                                          SET customer_name=:1, doctor_name=:2, patient_name=:3, gender=:4, symptom=:5, \
-                                          handphone=:6, address=:7, waktu=:8, tanggal=:9 \
-                                          WHERE id=:9;')
-                            session.execute(query, {'1':customer_name_baru, '2':doctor_name_baru, '3':patient_name_baru, '4':gender_baru, '5':str(symptom_baru), 
-                                                    '6':handphone_baru, '7':address_baru, '8':waktu_baru, '9':tanggal_baru, '10':id})
-                            session.commit()
-                            st.experimental_rerun()
-                
-                with col2:
-                    if st.form_submit_button('DELETE'):
-                        query = text(f'DELETE FROM schedule WHERE id=:1;')
-                        session.execute(query, {'1':id})
-                        session.commit()
-                        st.experimental_rerun()
+        # Update nilai di dalam data
+        data_reservasi.at[_, 'Value'] = jawaban
+
+        # Hitung total harga makanan dan minuman
+        if pertanyaan == 'Makan:':
+            total_harga += sum([row['Harga'][makanan] for makanan in jawaban])
+        elif pertanyaan == 'Minum:':
+            total_harga += sum([row['Harga'][minuman] for minuman in jawaban])
+
+    # Menampilkan total harga
+    st.write(f"Total Harga: {total_harga}")
+
+    # Tombol untuk menyimpan data reservasi
+    if st.button('Reservasi'):
+        st.success('Data reservasi berhasil disimpan!')
