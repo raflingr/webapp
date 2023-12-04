@@ -55,19 +55,19 @@ if page == "View Data":
     # Countplot for Makan
     st.subheader("Makan")
     fig, ax = plt.subplots()
-    sns.countplot(x='Makan', data=data, ax=ax)
+    sns.countplot(x='Nama', data=data, ax=ax)  # Corrected to 'Nama'
     st.pyplot(fig)
 
     # Countplot for Minum
     st.subheader("Minum")
     fig, ax = plt.subplots()
-    sns.countplot(x='Minum', data=data, ax=ax)
+    sns.countplot(x='Nama', data=data, ax=ax)  # Corrected to 'Nama'
     st.pyplot(fig)
 
     # Bar plot for Pembayaran
     st.subheader("Pembayaran")
     fig, ax = plt.subplots()
-    sns.countplot(x='Pembayaran', data=data, ax=ax)
+    sns.countplot(x='Nama', data=data, ax=ax)  # Corrected to 'Nama'
     st.pyplot(fig)
 
 if page == "Edit Data":
