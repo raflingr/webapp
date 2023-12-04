@@ -1,19 +1,14 @@
-drop table if exists schedule;
-create table schedule (
-	id serial,
-	customer_name text,
-	doctor_name text,
-	patient_name text,
-	gender text,
-	symptom text,
-	handphone text,
-	address text,
-	waktu time,
-	tanggal date
-);
+drop table if exists RESERVATION;
+CREATE TABLE IF NOT EXISTS RESERVATION (id serial, \
+                                                       Nama varchar, \
+                                                       Makan text[], \
+                                                       Minum text[], \
+                                                       Pembayaran varchar, \
+                                                       No_Kamar varchar, \
+                                                       No_Meja varchar, \
+                                                       PRIMARY KEY (id));
 
-insert into schedule (customer_name, doctor_name, patient_name, gender, symptom, handphone, address, waktu, tanggal) 
+insert into RESERVATION (Nama, Makan, Minum, Pembayaran, No_Kamar, No_Meja) 
 values
-	('rafli', 'dr. Nurita', 'Ahmad Maulana', 'male', '["headache", "stomache"]', 62838, 'address1', '08:00', '2023-10-01'),
-	('dhany', 'dr. Yogi', 'Renata Zahab', 'female', '["cough", "flu"]', 62828, 'address2', '08:00', '2022-11-02')
-	;
+	{'John Doe', 'Nasi Goreng', 'Es Teh', 'Debit', '101', 'A1', '27000'},
+	{'John Doi', 'Mie Goreng', 'Es Teh', 'Debit', '103', 'A2', '28000'};
