@@ -1,22 +1,23 @@
 import streamlit as st
 import pandas as pd
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
 import seaborn as sns
-import pandas as pd
 import matplotlib.pyplot as plt
 
 # Data reservasi
 data_reservasi = pd.DataFrame({
     'Pertanyaan': ['Nama', 'Makan:', 'Minum:', 'Pembayaran:', 'No Kamar:', 'No Meja:'],
-    'Type': ['text', 'chose multiple', 'chose multiple', 'chose bersyarat', 'text', 'text'],  # Mengubah tipe data menjadi text
-    'Harga': [None, {'Nasi Goreng': 22000, 'Mie Goreng': 10000, 'Ayam Goreng': 15000}, {'Es Teh': 8000, 'Es Jeruk': 8000, 'Air Mineral': 5000}, None, None, None],
+    'Type': ['text', 'chose multiple', 'chose multiple', 'chose bersyarat', 'text', 'text'],
+    'Harga': [None, {'Nasi Goreng': 22000, 'Mie Goreng': 10000, 'Ayam Goreng': 15000},
+              {'Es Teh': 8000, 'Es Jeruk': 8000, 'Air Mineral': 5000}, None, None, None],
     'Value': [None, None, None, None, None, None]
 })
 
-conn = st.connection("postgresql", type="sql", 
-                     url="postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-dust-26397985.us-east-2.aws.neon.tech/web")
+# Create an SQLAlchemy engine
+engine = create_engine("postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-dust-26397985.us-east-2.aws.neon.tech/web")
+
 # Membuat tabel baru jika belum ada
-with conn.session as session:
+with engine.connect() as connection:
     query = text('CREATE TABLE IF NOT EXISTS RESERVATION (id serial, \
                                                        Nama varchar, \
                                                        Makan text[], \
@@ -25,7 +26,7 @@ with conn.session as session:
                                                        No_Kamar varchar, \
                                                        No_Meja varchar, \
                                                        PRIMARY KEY (id));')
-    session.execute(query)
+    connection.execute(query)
 
 # Tampilkan form untuk mengisi data
 st.header('CAFE HOTEL NUANSA LIMA')
@@ -34,8 +35,10 @@ page = st.sidebar.selectbox("Reservasi Cafe", ["View Data", "Edit Data"])
 if page == "View Data":
     # Dummy data untuk ditampilkan
     dummy_data = [
-        {'Nama': 'John Doe', 'Makan': ['Nasi Goreng', 'Ayam Goreng'], 'Minum': ['Es Teh', 'Air Mineral'], 'Pembayaran': 'Debit', 'No Kamar': '101', 'No Meja': 'A1', 'Total Harga': 27000},
-        {'Nama': 'Jane Doe', 'Makan': ['Mie Goreng', 'Ayam Goreng'], 'Minum': ['Es Jeruk', 'Air Mineral'], 'Pembayaran': 'Cash', 'No Kamar': '102', 'No Meja': 'A2', 'Total Harga': 28000},
+        {'Nama': 'John Doe', 'Makan': ['Nasi Goreng', 'Ayam Goreng'], 'Minum': ['Es Teh', 'Air Mineral'],
+         'Pembayaran': 'Debit', 'No Kamar': '101', 'No Meja': 'A1', 'Total Harga': 27000},
+        {'Nama': 'Jane Doe', 'Makan': ['Mie Goreng', 'Ayam Goreng'], 'Minum': ['Es Jeruk', 'Air Mineral'],
+         'Pembayaran': 'Cash', 'No Kamar': '102', 'No Meja': 'A2', 'Total Harga': 28000},
     ]
 
     # Tampilkan data dalam bentuk tabel
@@ -43,7 +46,7 @@ if page == "View Data":
     st.table(dummy_data)
 
     # Data Visualization
-    data = pd.read_sql_query('SELECT * FROM RESERVATION ORDER By id;', conn).set_index('id')
+    data = pd.read_sql_query('SELECT * FROM RESERVATION ORDER By id;', con=engine).set_index('id')
     st.dataframe(data)
 
     # Visualize data using seaborn
