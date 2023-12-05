@@ -7,7 +7,6 @@ list_payment = ['', 'ATM', 'Transfer', 'Tunai']
 list_metode = ['','Diantar', 'Ditunggu']
 
 conn = st.connection("postgresql", type="sql", 
-                     url="postgresql", type="sql", 
                      url="postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-round-dust-26397985.us-east-2.aws.neon.tech/web")
 with conn.session as session:
     query_room = text('CREATE TABLE IF NOT EXISTS hotel_room (id serial, nama text, gender varchar, contact text, series_room varchar, other_needs text, \
