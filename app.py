@@ -181,21 +181,6 @@ def visualisasi_data():
     if page_visul == "Data Restaurant":
         data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
-        data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
-        st.dataframe(data)
-
-        st.subheader("Data Visualization")
-
-        # Create a bar chart for jumlah_minuman
-        fig, ax = plt.subplots()
-        sns.countplot(x='jumlah_minuman', data=data, ax=ax)
-        st.pyplot(fig)
-
-        # Create a bar chart for jumlah_makanan
-        fig, ax = plt.subplots()
-        sns.countplot(x='jumlah_makanan', data=data, ax=ax)
-        st.pyplot(fig)
-
 
 if st.sidebar.checkbox("Room Hotel"):
         room_hotel()
