@@ -1,8 +1,5 @@
 import streamlit as st
 from sqlalchemy import text
-import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
 
 list_room = ['', 'Twin Deluxe', 'Double Bed', 'Family Class', 'Business Premium', 'Diamond Class', 'VVIP Class']
 list_gender = ['', 'male', 'female']
@@ -184,16 +181,8 @@ def visualisasi_data():
     if page_visul == "Data Restaurant":
         data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
-        data = pd.read_sql_query('SELECT * FROM schedule ORDER By id;', conn).set_index('id')
-        st.dataframe(data)
-        st.subheader("Data Visualization")
-        fig, ax = plt.subplots()
-        sns.countplot(x='jumlah_minuman', data='minuman', ax=ax)
-        st.pyplot(fig)
-        fig, ax = plt.subplots()
-        sns.countplot(x='jumlah_makanan', data='makanan', ax=ax)
-        st.pyplot(fig)
-    
+
+
 if st.sidebar.checkbox("Room Hotel"):
         room_hotel()
 if st.sidebar.checkbox("Restaurant Hotel"):
