@@ -189,10 +189,10 @@ def visualisasi_data():
     st.dataframe(data)
     st.subheader("Data Visualization")
     fig, ax = plt.subplots()
-    sns.countplot(x='jumlah_minuman', data=data, ax=ax)
+    sns.countplot(x='jumlah_minuman', data='minuman', ax=ax)
     st.pyplot(fig)
     fig, ax = plt.subplots()
-    sns.countplot(x='jumlah_makanan', data=data, ax=ax)
+    sns.countplot(x='jumlah_makanan', data='makanan', ax=ax)
     st.pyplot(fig)
 
 if st.sidebar.checkbox("Room Hotel"):
