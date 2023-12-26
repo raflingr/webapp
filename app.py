@@ -1,10 +1,14 @@
 import streamlit as st
 from sqlalchemy import text
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
 
 list_room = ['', 'Twin Deluxe', 'Double Bed', 'Family Class', 'Business Premium', 'Diamond Class', 'VVIP Class']
 list_gender = ['', 'male', 'female']
 list_payment = ['', 'ATM', 'Transfer', 'Tunai']
 list_metode = ['','Diantar', 'Ditunggu']
+list_needs = ['', 'Water', 'Sandal', 'Handuk', 'Bantal', 'Guling', 'Sikat Gigi']
 
 conn = st.connection("postgresql", type="sql", 
                      url="postgresql://raflinugrahasyach26:OVv3xh7JBDiY@ep-spring-salad-87330421.us-east-2.aws.neon.tech/web")
@@ -32,8 +36,8 @@ def home():
 
 def room_hotel():
     
-    st.header('Diamond Luxury Tower Hotel')
-    page_awal = st.sidebar.selectbox("Room Hotel", ["Database Hotel","Adding Database"])
+    st.header('Reservation Room Diamond Luxury Tower Hotel')
+    page_awal = st.sidebar.selectbox("Room Hotel", ["Database Hotel","Adding Hotel"])
 
     with conn.session as session:
         query = text('CREATE TABLE IF NOT EXISTS hotel_room (id serial, nama text, gender char(25), contact text, series_hotel_room text, other_needs text, \
@@ -44,7 +48,7 @@ def room_hotel():
         data = conn.query('SELECT * FROM hotel_room ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
 
-    if page_awal == "Adding Database":
+    if page_awal == "Adding Hotel":
         if st.button('Tambah Data'):
             with conn.session as session:
                 query = text('INSERT INTO hotel_room (nama, gender, contact, series_room, other_needs, check_in, time_ci, check_out, time_co, payment, price) \
@@ -73,7 +77,7 @@ def room_hotel():
                     gender_akhir = st.selectbox("gender", list_gender, list_gender.index(gender_awal))
                     contact_akhir = st.text_input("contact", contact_awal)
                     room_akhir = st.multiselect("series_room", ['Twin Deluxe', 'Double Bed', 'Family Class', 'Business Premium', 'Diamond Class', 'VVIP Class'], eval(room_awal))
-                    other_akhir = st.text_input("other_needs", other_awal)
+                    other_akhir = st.selectbox("other_needs", list_needs, list_needs.index(other_awal))
                     checkin_akhir = st.date_input("check_in", checkin_awal)
                     timeci_akhir = st.time_input("time_ci", timeci_awal)
                     checkout_akhir = st.date_input("check_out", checkout_awal)
@@ -104,8 +108,8 @@ def room_hotel():
 
 def restaurant_hotel():
     
-    st.header('Diamond Luxury Tower Hotel')
-    page_akhir = st.sidebar.selectbox("Restaurant Hotel", ["Database Restaurant","Adding Pelanggan"])
+    st.header('Reservation Restaurant Diamond Luxury Tower Hotel')
+    page_akhir = st.sidebar.selectbox("Restaurant Hotel", ["Database Restaurant","Adding Restaurant"])
 
     with conn.session as session:
         query = text('CREATE TABLE IF NOT EXISTS hotel_restaurant (id serial, pelanggan text, makanan text, jumlah_makanan text, minuman text, \
@@ -116,7 +120,7 @@ def restaurant_hotel():
         data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
 
-    if page_akhir == "Adding Pelanggan":
+    if page_akhir == "Adding Restaurant":
         if st.button('Adding'):
             with conn.session as session:
                     query_restaurant = text('INSERT INTO hotel_restaurant ("pelanggan", "makanan", "jumlah_makanan", "minuman", "jumlah_minuman", "metode", "no_tempat", "total_harga", "pembayaran") \
@@ -169,24 +173,70 @@ def restaurant_hotel():
                             session.execute(query, {'1':id})
                             session.commit()
                             st.experimental_rerun()
-   
+
 def visualisasi_data():
     st.header('Visualisasi Database Diamond Luxury Tower Hotel')
     page_visul = st.sidebar.selectbox("Visualisasi", ["Data Hotel","Data Restaurant"])
 
     if page_visul == "Data Hotel":
-        data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
+        st.markdown("Visualisasi Sederhana Database Room Hotel")
+        data = conn.query('SELECT * FROM hotel_room ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
+
+        st.subheader("Visualisasi Gender yang Sering Reservasi Awal")
+        gender_counts = data['gender'].value_counts()
+        fig, ax = plt.subplots()
+        ax.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=90)
+        ax.axis('equal')
+        st.pyplot(fig)
+
+        st.subheader("Visualisasi Kamar yang Sering Digunakan")
+        fig, ax = plt.subplots()
+        sns.countplot(x='series_room', data=data, ax=ax)
+        st.pyplot(fig)
+
+        st.subheader("Visualisasi Kebutuhan Lainnya")
+        fig, ax = plt.subplots()
+        sns.countplot(x='other_needs', data=data, ax=ax)
+        st.pyplot(fig)
+
+        st.subheader("Visualisasi Metode Pembayaran Konsumen")
+        fig, ax = plt.subplots()
+        sns.countplot(x='payment', data=data, ax=ax)
+        st.pyplot(fig)
 
     if page_visul == "Data Restaurant":
+        st.markdown("Visualisasi Sederhana Database Restaurant")
         data = conn.query('SELECT * FROM hotel_restaurant ORDER By id;', ttl="0").set_index('id')
         st.dataframe(data)
 
+        def plot_combined_histogram(data, column1, column2, chart_title, x_label, y_label):
+            st.subheader("Visualisasi Data Jumlah Banyak Pemesanan Tiap Pembelian")
+            fig, ax = plt.subplots()
+            ax.hist(data[column1], bins=20, alpha=0.5, label='Jumlah Makanan', edgecolor='black')
+            ax.hist(data[column2], bins=20, alpha=0.5, label='Jumlah Minuman', edgecolor='black')
+            
+            ax.set(xlabel=x_label, ylabel=y_label, title=chart_title)
+            ax.legend(loc='upper right')  # Menambahkan legenda
+            st.pyplot(fig)
+
+        plot_combined_histogram(data, 'jumlah_makanan', 'jumlah_minuman', '', 'Jumlah Tiap Membeli', 'Frekuensi')
+
+        st.subheader("Visualisasi Metode Pengambilan Makanan")
+        fig, ax = plt.subplots()
+        sns.countplot(x='metode', data=data, ax=ax)
+        st.pyplot(fig)
+
+        st.subheader("Visualisasi Metode Pembayaran Konsumen")
+        fig, ax = plt.subplots()
+        sns.countplot(x='pembayaran', data=data, ax=ax)
+        st.pyplot(fig)
+
 if st.sidebar.checkbox("Room Hotel"):
-        room_hotel()
-if st.sidebar.checkbox("Restaurant Hotel"):
-        restaurant_hotel()
-if st.sidebar.checkbox("Visualisasi"):
-        visualisasi_data()
+    room_hotel()
+elif st.sidebar.checkbox("Restaurant Hotel"):
+    restaurant_hotel()
+elif st.sidebar.checkbox("Visualisasi Database"):
+    visualisasi_data()
 else:
     home()
